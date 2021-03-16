@@ -1,0 +1,35 @@
+% extends 'base_layout.html' %} {% block body %}
+<div class="mt-5">
+
+
+    <div class="col-md-12">
+        <div class="touch">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h5 class="text-center"> Most Popular </h5>
+
+                    <div class="row">
+                        {% for i in range(0,12)%}
+                        <div class="col-md-4 mt-2">
+                            <div class="card">
+                                <img class="card-img-top" src="{{mostPop[i][1]}}" alt="Card image cap">
+                                <div class="card-body">
+
+                                    <h4 class="card-title"><a>{{mostPop[i][0]}}</a></h4>
+                                    <p class="card-text">Type : {{mostPop[i][3]}} </br> Score : {{mostPop[i][4]}} </br>Episodes : {{mostPop[i][5]}}</p>
+                                    <div class="text-center">
+                                        <a href="/info/{{mostPop[i][2]}}" class="text-center btn btn-danger">Readmore</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
