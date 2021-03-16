@@ -5,15 +5,15 @@
             <div class="card text-left">
                 <div class="card-body">
                     <h5 class="text-center"> Most Popular </h5>
-
                     <div class="row">
-                        {% for i in search%}
+                        {% for i in data%}
                         <div class="col-md-4 mt-2">
                             <div class="card">
                                 <img class="card-img-top" src="{{i.image_url}}" alt="Card image cap">
                                 <div class="card-body">
                                     <h4 class="card-title"><a>{{i.title}}</a></h4>
-                                    <p class="card-text">Type : {{i.type}} </br> Score : {{i.score}} </br>Episodes : {{i.episodes}} </br>Synosis : {{i.synopsis}}</p>
+                                    <h6>Rank: {{i.rank}} </h6>
+                                    <p class="card-text">Type : {{i.type}} </br> Score : {{i.score}} </br>Episodes : {{i.episodes}}</p>
                                     <div class="text-center">
                                         <a href="/info/{{i.mal_id}}" class="text-center btn btn-danger">Readmore</a>
                                     </div>
@@ -21,7 +21,7 @@
                             </div>
                         </div>
                         {% endfor %}
-                    </div>
+                    </div><a type='button' style="float: right;" href="/MostPopular/{{curPage}}"> See more </a>
                 </div>
             </div>
         </div>

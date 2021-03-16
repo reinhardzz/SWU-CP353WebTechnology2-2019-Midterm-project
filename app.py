@@ -2,19 +2,35 @@ import json
 from flask import Flask, render_template,request
 import json
 import requests
-
 app = Flask(__name__)
+
+
 
 @app.route('/')
 @app.route('/index')
 def index():
-    url0 = 'https://api.jikan.moe/v3/top/anime/1/upcoming'
-    data = requests.get(url0).json()['top']
-    upcoming = [(i['title'],i['image_url'],i['mal_id']) for i in data]
-    url1 = 'https://api.jikan.moe/v3/top/anime/1/bypopularity'
-    data = requests.get(url1).json()['top']
-    mostPop = [(i['title'],i['image_url'],i['mal_id'],i['type'],i['score'],i['episodes']) for i in data]
-    return render_template('index.html', upcoming = upcoming, mostPop = mostPop)
+    upcomingUrl = 'https://api.jikan.moe/v3/top/anime/1/upcoming'
+    mostPopUrl = 'https://api.jikan.moe/v3/top/anime/1/bypopularity'
+    upcoming = requests.get(upcomingUrl).json()['top']
+    mostPop = requests.get(mostPopUrl).json()['top']
+    return render_template('index.html', upcoming = upcoming, mostPop = mostPop, title = "Index")
+@app.route('/Upcoming')
+@app.route('/Upcoming/<page>')
+def upcoming(page = 0):
+    curPage = 1
+    curPage += int(page)
+    upcomingUrl = 'https://api.jikan.moe/v3/top/anime/{}/upcoming'.format(curPage)
+    upcoming = requests.get(upcomingUrl).json()['top']
+    return render_template('upcoming.html', data = upcoming,curPage = curPage, title = "Upcoming")
+@app.route('/MostPopular')
+@app.route('/MostPopular/<page>')
+def mostPop(page = 0):
+    curPage = 1
+    curPage += int(page)
+    mostPopUrl = 'https://api.jikan.moe/v3/top/anime/{}/bypopularity'.format(curPage)
+    mostPop = requests.get(mostPopUrl).json()['top']
+    return render_template('mostPop.html', data = mostPop, curPage = curPage, title = "MostPopular")
+
 
 @app.route('/info/<id>')
 def info(id):
@@ -22,32 +38,26 @@ def info(id):
     return requests.get(url).json()
  
  
-@app.route('/genre')
+@app.route('/search/')
 def news():
-    tag = request.args.get('search_news')
-
-    if not tag:
-        tag = 'phone'
-
-    news = searchNews(tag,NEWS_KEY)
-    return render_template('genre.html', news=news)
-
-
+    keyword = request.args.get('keyword', default = '')
+    url = 'https://api.jikan.moe/v3/search/anime?q=' + keyword
+    try:
+        search = requests.get(url).json()['results']
+        if search:
+            return render_template('search.html', search = search, title = "Search : " + keyword)            
+        else:
+            raise Exception()
+    except:
+        return render_template('NoResult.html',title ='No Result')
+    
+@app.route('/genre/')
+def genre():
+    return render_template('genre.html', title = 'Genre')
 
 @app.route('/aboutus')
 def aboutme():
     return render_template('aboutus.html')
-
-def searchNews(tag,API_KEY):
-    query = quote(tag)
-    url = NEWS_URL.format(query, API_KEY)
-    print(url)
-    data = urlopen(url).read()
-    parsed = json.loads(data)
-    news = parsed.get('articles')
-    
-    return news
-    
 
 
 if __name__ == '__main__':
